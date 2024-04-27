@@ -46,7 +46,7 @@ end)
 ---@param pointed_thing PointedThing
 ---@return pos? vector
 ---@see minetest.item_place_node
-function extended_protection.pointed_thing_to_string(pointed_thing)
+function extended_protection.pointed_thing_to_pos(pointed_thing)
     if pointed_thing.type == "node" then
         local under = pointed_thing.under
         local node_under = minetest.get_node_or_nil(under)
