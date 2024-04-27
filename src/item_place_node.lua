@@ -41,3 +41,37 @@ extended_protection.register_on_item_place_node_protection_violation(function(it
     logger:action((placer and placer:is_player() and placer:get_player_name() or "A mod") ..
         " attempted to place " .. itemstack:to_string() .. " at " .. pointed_thing_to_string(pointed_thing))
 end)
+
+---Helper: convert pointed_thing into position
+---@param pointed_thing PointedThing
+---@return pos? vector
+---@see minetest.item_place_node
+function extended_protection.pointed_thing_to_string(pointed_thing)
+    if pointed_thing.type == "node" then
+        local under = pointed_thing.under
+        local node_under = minetest.get_node_or_nil(under)
+        local above = pointed_thing.above
+        local node_above = minetest.get_node_or_nil(above)
+
+        if not node_under or not node_above then
+            return nil
+        end
+
+        local def_under = minetest.registered_nodes[node_under.name]
+        def_under = def_under or minetest.nodedef_default
+        local def_above = minetest.registered_nodes[node_above.name]
+        def_above = def_above or minetest.nodedef_default
+
+        if not def_above.buildable_to and not def_under.buildable_to then
+            return nil
+        end
+
+        if def_under.buildable_to then
+            return under
+        end
+
+        return above
+    end
+
+    return nil
+end
